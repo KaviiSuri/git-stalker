@@ -1,6 +1,18 @@
 # Git Stalker
 
-Git Stalker is a simple tool to track GitHub activity for a user within an organization.
+Track GitHub activity for users within organizations.
+
+![Demo](demo/demo.gif)
+
+## Features
+
+- Track user activity within specific organizations
+- Filter by date range
+- Pretty print or JSON output with links
+- Configurable logging
+- Multiple output formats (pretty/json)
+- Rate limit handling
+- Organization-specific activity filtering
 
 ## Installation
 
@@ -12,7 +24,12 @@ Git Stalker is a simple tool to track GitHub activity for a user within an organ
 
 2. Install dependencies:
    ```sh
-   pip install -r requirements.txt
+   uv venv
+   source .venv/bin/activate  # On Unix/macOS
+   # or
+   .venv\Scripts\activate  # On Windows
+   
+   uv pip install -e ".[dev]"
    ```
 
 3. Create a `.env` file with your GitHub token:
@@ -22,5 +39,50 @@ Git Stalker is a simple tool to track GitHub activity for a user within an organ
 
 ## Usage
 
-Run the tool using Typer CLI:
+Basic usage:
+```sh
+# Track all activity
+git-stalker username
+
+# Track activity in a specific organization
+git-stalker username --org organization
+
+# Filter by date range
+git-stalker username --org organization --start-date "2024-01-01" --end-date "2024-02-01"
+
+# Get JSON output with links
+git-stalker username --org organization --output-format json
+```
+
+## Environment Variables
+
+- `GITHUB_TOKEN`: Your GitHub personal access token
+- `LOG_LEVEL`: Logging level (DEBUG/INFO/WARNING/ERROR)
+- `GITHUB_RETRY_TOTAL`: Number of retries for failed requests (default: 0)
+- `GITHUB_RETRY_BACKOFF`: Backoff factor between retries in seconds (default: 0.1)
+
+## Development
+
+Run development tasks using uv:
+
+```sh
+# Run tests
+uv run test
+
+# Run linting
+uv run lint
+
+# Run formatting
+uv run format
+
+# Run type checking
+uv run typecheck
+
+# Run all checks
+uv run check
+```
+
+## License
+
+MIT
 
