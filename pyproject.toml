@@ -1,16 +1,51 @@
 [project]
 name = "git-stalker"
 version = "0.1.0"
-description = "Track GitHub activity for a user within an organization"
-readme = "README.md"
-requires-python = ">=3.12"
+description = "A tool to track GitHub activity for a user within an organization"
+authors = []
 dependencies = [
-    "requests",
-    "python-dotenv",
-    "rich",
-    "typer"
+    "typer>=0.9.0",
+    "rich>=13.7.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "black>=24.1.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+    "pytest-cov>=4.1.0",
 ]
 
-[tool.pyright]
-venv = ".venv"
-venvPath = "."
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# CLI entry point
+[project.scripts]
+git-stalker = "src.cli.main:main"
+
+# Tool configurations
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+select = ["E", "F", "I", "B", "W", "C90"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
