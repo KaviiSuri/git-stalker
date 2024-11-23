@@ -10,3 +10,7 @@ dependencies = [
     "rich",
     "typer"
 ]
+
+[tool.pyright]
+venv = ".venv"
+venvPath = "."

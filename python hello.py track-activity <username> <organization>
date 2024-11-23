@@ -1,9 +1,0 @@
-
-### Options
-
-- `--start-date`: Start date in YYYY-MM-DD format (default: last 7 days)
-- `--end-date`: End date in YYYY-MM-DD format
-- `--output-format`: Output format (pretty/json) (default: pretty)
-
-## Example
-
