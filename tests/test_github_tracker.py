@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
-from src.core.github import GitHubActivitySource
-from src.core.base import Activity
+from git_stalker.core.github import GitHubActivitySource
+from git_stalker.core.base import Activity
 
 def test_github_source_initialization():
     token = "dummy_token"

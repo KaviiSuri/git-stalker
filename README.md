@@ -61,27 +61,6 @@ git-stalker username --org organization --output-format json
 - `GITHUB_RETRY_TOTAL`: Number of retries for failed requests (default: 0)
 - `GITHUB_RETRY_BACKOFF`: Backoff factor between retries in seconds (default: 0.1)
 
-## Development
-
-Run development tasks using uv:
-
-```sh
-# Run tests
-uv run test
-
-# Run linting
-uv run lint
-
-# Run formatting
-uv run format
-
-# Run type checking
-uv run typecheck
-
-# Run all checks
-uv run check
-```
-
 ## License
 
 MIT

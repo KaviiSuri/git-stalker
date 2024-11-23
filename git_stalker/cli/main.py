@@ -5,9 +5,9 @@ import json
 from rich.console import Console
 from typer import Typer, Argument, Option
 
-from ..config import get_github_token
-from ..core import ActivityTracker, GitHubActivitySource
-from ..core.logging import setup_logging
+from git_stalker.config import get_github_token
+from git_stalker.core import ActivityTracker, GitHubActivitySource
+from git_stalker.core.logging import setup_logging
 
 app = Typer()
 console = Console()

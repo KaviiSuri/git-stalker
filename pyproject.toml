@@ -26,7 +26,7 @@ build-backend = "hatchling.build"
 
 # CLI entry point
 [project.scripts]
-git-stalker = "src.cli.main:main"
+git-stalker = "git_stalker.cli.main:main"
 
 # Tool configurations
 [tool.ruff]
