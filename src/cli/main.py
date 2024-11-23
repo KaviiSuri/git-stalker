@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any
+import json
 from rich.console import Console
 from typer import Typer, Argument, Option
 
@@ -10,6 +11,23 @@ from ..core.logging import setup_logging
 
 app = Typer()
 console = Console()
+
+class ActivityJSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder for Activity objects."""
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+def activity_to_dict(activity) -> Dict[str, Any]:
+    """Convert an activity to a dictionary for JSON serialization."""
+    return {
+        "source": activity.source,
+        "timestamp": activity.timestamp,
+        "type": activity.type,
+        "details": activity.details,
+        "message": activity.message,
+    }
 
 @app.command()
 def track_activity(
@@ -46,15 +64,16 @@ def track_activity(
         )
 
         # Display activities
-        for activity in activities:
-            if output_format == "pretty":
+        if output_format == "json":
+            # Convert activities to JSON
+            activities_json = [activity_to_dict(activity) for activity in activities]
+            console.print(json.dumps(activities_json, cls=ActivityJSONEncoder, indent=2))
+        else:
+            # Pretty print format
+            for activity in activities:
                 console.print(f"[bold blue]{activity.timestamp.strftime('%Y-%m-%d %H:%M:%S')}[/bold blue]")
                 console.print(f"[bold]{activity.source}[/bold]: {activity.message}")
                 console.print()
-            else:
-                console.print(f"[bold]{activity.source}[/bold]: {activity.type}")
-                console.print(f"  Time: {activity.timestamp}")
-                console.print(f"  Details: {activity.details}\n")
     
     except Exception as e:
         logger.exception(f"Error in track_activity: {str(e)}")

@@ -77,15 +77,23 @@ class GitHubActivitySource:
             repo = event.get("repo", {}).get("name", "unknown")
             payload = event.get("payload", {})
             
+            # Base GitHub URL for constructing links
+            base_url = "https://github.com"
+            repo_url = f"{base_url}/{repo}"
+            
             if event_type == "PushEvent":
+                ref = payload.get("ref", "unknown")
+                branch = ref.replace("refs/heads/", "")
                 simplified = {
                     "repository": repo,
-                    "ref": payload.get("ref", "unknown"),
+                    "repository_url": repo_url,
+                    "ref": ref,
                     "commit_count": len(payload.get("commits", [])),
                     "commit_messages": [
                         commit.get("message", "").split("\n")[0]  # First line only
                         for commit in payload.get("commits", [])[:3]  # First 3 commits only
-                    ]
+                    ],
+                    "compare_url": f"{repo_url}/compare/{payload.get('before', '')}...{payload.get('head', '')}"
                 }
             
             elif event_type == "PullRequestEvent":
@@ -95,7 +103,9 @@ class GitHubActivitySource:
                     "title": pr.get("title", "unknown"),
                     "number": pr.get("number", "unknown"),
                     "repository": repo,
+                    "repository_url": repo_url,
                     "state": pr.get("state", "unknown"),
+                    "url": pr.get("html_url"),
                 }
             
             elif event_type == "IssuesEvent":
@@ -105,6 +115,8 @@ class GitHubActivitySource:
                     "title": issue.get("title", "unknown"),
                     "number": issue.get("number", "unknown"),
                     "repository": repo,
+                    "repository_url": repo_url,
+                    "url": issue.get("html_url"),
                 }
             
             elif event_type == "IssueCommentEvent":
@@ -112,14 +124,25 @@ class GitHubActivitySource:
                     "action": payload.get("action", "unknown"),
                     "issue_number": payload.get("issue", {}).get("number", "unknown"),
                     "repository": repo,
-                    "comment_fragment": payload.get("comment", {}).get("body", "")[:100] + "..."
+                    "repository_url": repo_url,
+                    "comment_fragment": payload.get("comment", {}).get("body", "")[:100] + "...",
+                    "url": payload.get("comment", {}).get("html_url"),
+                    "issue_url": payload.get("issue", {}).get("html_url"),
                 }
             
             elif event_type == "CreateEvent":
+                ref_type = payload.get("ref_type", "unknown")
+                ref = payload.get("ref", "unknown")
                 simplified = {
-                    "ref_type": payload.get("ref_type", "unknown"),
-                    "ref": payload.get("ref", "unknown"),
+                    "ref_type": ref_type,
+                    "ref": ref,
                     "repository": repo,
+                    "repository_url": repo_url,
+                    "url": (
+                        f"{repo_url}/tree/{ref}" if ref_type == "branch"
+                        else f"{repo_url}/releases/tag/{ref}" if ref_type == "tag"
+                        else repo_url
+                    ),
                 }
             
             elif event_type == "DeleteEvent":
@@ -127,12 +150,14 @@ class GitHubActivitySource:
                     "ref_type": payload.get("ref_type", "unknown"),
                     "ref": payload.get("ref", "unknown"),
                     "repository": repo,
+                    "repository_url": repo_url,
                 }
             
             elif event_type == "WatchEvent":
                 simplified = {
                     "action": payload.get("action", "unknown"),
                     "repository": repo,
+                    "repository_url": repo_url,
                 }
             
             else:
@@ -140,6 +165,7 @@ class GitHubActivitySource:
                 simplified = {
                     "event_type": event_type,
                     "repository": repo,
+                    "repository_url": repo_url,
                 }
         except Exception as e:
             self.logger.warning(f"Error simplifying {event_type} event: {str(e)}")
